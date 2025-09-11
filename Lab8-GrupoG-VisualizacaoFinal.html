@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização de Dados - Grupo G</title>
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 0; box-sizing: border-box; }
+        .header-info { padding: 20px 50px; background-color: #a4dceb; }
+        #header { padding: 20px 0; }
+        #container { width: 100%; max-width: 1800px; height: 900px; margin: 0 auto; padding: 10px 30px 10px 30px; box-sizing: border-box; }
+        #footer { height: 2%; margin-top: 20px; }
+        
+        /* Estilos para os filtros de checkbox */
+        #controls { text-align: center; margin-bottom: 20px; }
+        #sankey-controls { background-color: #e9ecef; padding: 15px; border-radius: 8px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px;}
+        .filter-group { display: inline-block; }
+        .dropdown-check-list { display: inline-block; position: relative; }
+        .dropdown-check-list .anchor { cursor: pointer; display: inline-block; padding: 8px 15px; border: 1px solid #ccc; border-radius: 5px; background-color: white; user-select: none; }
+        .dropdown-check-list .items { display: none; position: absolute; background-color: white; border: 1px solid #ccc; border-top: none; max-height: 200px; overflow-y: auto; z-index: 10; padding: 5px; text-align: left; }
+        .dropdown-check-list.visible .items { display: block; }
+        .items label { display: block; padding: 5px; white-space: nowrap; }
+        .items label:hover { background-color: #f0f0f0; }
+        .filter-buttons { display: flex; gap: 10px; align-items: center; border-left: 2px solid #ccc; padding-left: 20px; margin-left: 10px; }
+        .filter-buttons button { padding: 9px 20px; font-size: 1em; font-weight: bold; cursor: pointer; background-color: #f0f0f0; color: #333; border: 1px solid #ccc; border-radius: 5px; }
+        .filter-buttons button:hover { background-color: #e0e0e0; }
+        #resetFiltersBtn { background-color: #f8d7da; border-color: #f5c6cb; }
+        #resetFiltersBtn:hover { background-color: #f1b0b7; }
+        .separator { border-left: 2px solid #ccc; padding-left: 20px; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header-info">
+        <table style="width: 100%; border: 0"><tbody><tr><td style="text-align: left; vertical-align: top"><table style="border: 0"><tbody><tr><td style="width: 70px"><img src="https://maxmcz.github.io/visualizacao-de-dados_exemplo/UFCG_logo_png.png" alt="Brasão UFCG" style="margin-top: 5px; height: 62px"></td><td><div style="line-height: 1.4"><div><strong>UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - UFCG</strong></div><div>CENTRO DE ENGENHARIA ELÉTRICA E INFORMÁTICA - CEEI</div><div>UNIDADE ACADÊMICA DE SISTEMAS E COMPUTAÇÃO - UASC</div></div></td></tr></tbody></table></td><td style="text-align: right; vertical-align: top"><div>Disciplina: Visualização de Dados</div><div>Professor: Maxwell Guimarães de Oliveira</div><div>Período: 2024.1</div></td></tr></tbody></table>
+    </div>
+
+<div id="header">
+    <h2 style="text-align: center">Projeto de Visualização Interativa de Dados</h2>
+    <h4 style="text-align: center"><u>Grupo G</u>: Ana Santos, Karyna Araujo, Leticia Calixto, Maria Vitoria Araujo, Yalle Carvalho</h4>
+    <h2 style="text-align: center"><span style="font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;"><strong>O Fluxo do Desenvolvedor na Era da IA: Do Aprendizado à Percepção</strong></span></h2>
+    <p style="text-align: justify; padding: 10px 50px 10px 50px">Explore como diferentes profissionais de tecnologia estão aprendendo sobre Inteligência Artificial e como eles a percebem em seu dia a dia. Use os filtros e interações para investigar os dados.</p>
+    
+    <div id="controls">
+        <div id="sankey-controls">
+            <div class="filter-group">
+                <label style="font-weight: bold;">Cargo:</label>
+                <div id="devTypeFilter" class="dropdown-check-list"><span class="anchor">Selecionar</span><div class="items"></div></div>
+            </div>
+            <div class="filter-group">
+                <label style="font-weight: bold;">Aprendizado:</label>
+                <div id="learnCodeFilter" class="dropdown-check-list"><span class="anchor">Selecionar</span><div class="items"></div></div>
+            </div>
+            <div class="filter-group">
+                <label style="font-weight: bold;">Frustração:</label>
+                <div id="aiFrustrationFilter" class="dropdown-check-list"><span class="anchor">Selecionar</span><div class="items"></div></div>
+            </div>
+            <div class="filter-group">
+                <label style="font-weight: bold;">Confiança na IA:</label>
+                <div id="aiAccFilter" class="dropdown-check-list"><span class="anchor">Selecionar</span><div class="items"></div></div>
+            </div>
+            <div class="filter-group">
+                <label style="font-weight: bold;">Sentimento:</label>
+                <div id="aiSentFilter" class="dropdown-check-list"><span class="anchor">Selecionar</span><div class="items"></div></div>
+            </div>
+            <div class="filter-buttons separator">
+                <button id="applyFiltersBtn">Aplicar Filtros</button>
+                <button id="resetFiltersBtn">Resetar</button>
+            </div>
+            <div class="filter-group separator">
+                <label for="expandFilter" style="font-weight: bold;">Expandir Aprendizado:</label>
+                <select id="expandFilter" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;"><option value="none" selected>Selecione...</option></select>
+            </div>
+        </div>
+        <div id="details-controls" style="display: none; margin-top: 15px;">
+             <button id="backToSankeyButton" style="padding: 8px 12px; border-radius: 5px; border: 1px solid #ccc; background-color: #6c757d; color: white; cursor: pointer;">← Voltar para o Fluxo</button>
+        </div>
+    </div>
+</div>
+
+<div id="container"></div>
+
+<div id="footer">
+    <p style="text-align: justify; padding: 20px 50px 0px 50px"><b>Dicas para interagir com a visualização:</b></p>
+    <ul style="padding: 0px 50px 10px 75px;">
+        <li><b>Filtros Múltiplos:</b> Use os menus para selecionar múltiplas categorias e clique em "Aplicar Filtros".</li>
+        <li><b>Expandir Categoria:</b> Após filtrar, use o menu "Expandir" para ver um detalhamento em barras dos dados filtrados.</li>
+    </ul>
+</div>
+
+    <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<script type="text/javascript">
+    const dom = document.getElementById('container');
+    const myChart = echarts.init(dom, null, { renderer: 'canvas', useDirtyRect: false });
+    myChart.showLoading();
+
+    const sankeyColumns = ['DevType', 'LearnCode', 'AIFrustration', 'AIAcc', 'AISent'];
+    let allRawData = []; 
+    let currentFilteredData = [];
+    let currentlyClickedNodeName = null;
+
+    const learnCodeGrouping = { 'Cursos e Certificações': ['Online Courses or Certification'], 'Recursos Online': ['Other online resources', 'Stack Overflow', 'Technical documentation', 'Blogs or podcasts'], 'Materiais Físicos': ['Books / Physical media'], 'Vídeos': ['Videos'], 'Ambiente de Trabalho/Estudo': ['School', 'Colleague or on-the-job training', 'Coding challenges', 'Conferences, meet-ups', 'AI CodeGen tools'] };
+    const learnCodeDetailTranslations = { 'online courses or certification': 'Cursos Online/Certificados', 'other online resources': 'Outros Recursos Online', 'school': 'Escola', 'colleague or on-the-job training': 'Treinamento/Colegas', 'books / physical media': 'Livros', 'technical documentation': 'Documentação Técnica', 'blogs or podcasts': 'Blogs/Podcasts', 'coding challenges': 'Desafios de Programação', 'videos': 'Vídeos', 'stack overflow': 'Stack Overflow', 'ai codegen tools': 'Ferramentas de geração de código por IA', 'conferences, meet-ups': 'Conferências' };
+    const tooltipExplanations = { 'Executivo Sênior': '(C-suite, VP, etc.)', 'Outros Cargos': '(Respostas não categorizadas ou menos comuns)', 'Recursos Online': '(Inclui vídeos, blogs, fóruns, etc.)', 'Ambiente de Trabalho/Estudo': '(Inclui Escola, Colegas, Treinamento, etc.)' };
+
+    function mapLabel(column, label) { if (!label) return null; const lowerLabel = String(label).toLowerCase().trim(); switch (column) { case 'DevType': if (lowerLabel.includes('full-stack')) return 'Desenvolvedor Full-Stack'; if (lowerLabel.includes('back-end')) return 'Desenvolvedor Back-End'; if (lowerLabel.includes('front-end')) return 'Desenvolvedor Front-End'; if (lowerLabel.includes('desktop or enterprise applications')) return 'Desenvolvedor Desktop/Empresarial'; if (lowerLabel.includes('mobile')) return 'Desenvolvedor Mobile'; if (lowerLabel.includes('engineering manager')) return 'Gerente de Engenharia'; if (lowerLabel.includes('student')) return 'Estudante'; if (lowerLabel.includes('academic researcher')) return 'Pesquisador Acadêmico'; if (lowerLabel.includes('senior executive')) return 'Executivo Sênior'; if (lowerLabel.includes('embedded applications or devices')) return 'Desenvolvedor Embarcado/Dispositivos'; if (lowerLabel.includes('data scientist or machine learning specialist')) return 'Cientista de Dados/Especialista em ML'; if (lowerLabel.includes('devops specialist')) return 'Especialista DevOps'; if (lowerLabel.includes('data engineer')) return 'Engenheiro de Dados'; if (lowerLabel.includes('cloud infrastructure engineer')) return 'Engenheiro de Infraestrutura Cloud'; if (lowerLabel.includes('other (please specify)')) return 'Outros Cargos'; return label; case 'LearnCode': for (const group in learnCodeGrouping) { if (learnCodeGrouping[group].some(detail => lowerLabel.includes(detail.toLowerCase()))) { return group; } } if (lowerLabel.includes('none')) return null; return 'Outros Métodos'; case 'AIFrustration': if (lowerLabel.includes('ai solutions that are almost right')) return 'Soluções Quase Certas'; if (lowerLabel.includes('debugging ai-generated code')) return 'Depuração Lenta'; if (lowerLabel.includes('less confident in my own problem-solving')) return 'Menos Confiança Pessoal'; if (lowerLabel.includes('hard to understand how or why')) return 'Código de IA Incompreensível'; if (lowerLabel.includes('use ai tools regularly')) return 'Não uso IA regularmente'; if (lowerLabel.includes('encountered any problems')) return 'Não encontrei problemas'; if (lowerLabel.includes('other (write in)')) return 'Outras Frustrações'; return label; case 'AIAcc': if (lowerLabel.includes('highly distrust')) return 'Desconfiança Alta'; if (lowerLabel.includes('somewhat distrust')) return 'Desconfiança Moderada'; if (lowerLabel.includes('highly trust')) return 'Confiança Alta'; if (lowerLabel.includes('somewhat trust')) return 'Confiança Moderada'; if (lowerLabel.includes('neither trust nor distrust')) return 'Neutro'; return label; case 'AISent': if (lowerLabel.includes('very unfavorable')) return 'Muito Desfavorável'; if (lowerLabel.includes('unfavorable')) return 'Desfavorável'; if (lowerLabel.includes('very favorable')) return 'Muito Favorável'; if (lowerLabel.includes('favorable')) return 'Favorável'; if (lowerLabel.includes('indifferent')) return 'Indiferente'; if (lowerLabel.includes('unsure')) return 'Inseguro'; return label; default: return label; } }
+    
+    function drawSankey(dataToDraw, activeFilters = {}) {
+        const processedData = [];
+        const { learnCode: selectedLearnCodes = [], aiFrustration: selectedAIFrustrations = [] } = activeFilters;
+        dataToDraw.forEach(row => {
+            const learnMethods = (row.LearnCode || "").split(';').map(s => s.trim()).filter(Boolean);
+            const frustrations = (row.AIFrustration || "").split(';').map(s => s.trim()).filter(Boolean);
+            learnMethods.forEach(method => {
+                const mappedLearnCode = mapLabel('LearnCode', method);
+                if (selectedLearnCodes.length > 0 && !selectedLearnCodes.includes(mappedLearnCode)) return;
+                frustrations.forEach(frustration => {
+                    const mappedFrustration = mapLabel('AIFrustration', frustration);
+                    if (selectedAIFrustrations.length > 0 && !selectedAIFrustrations.includes(mappedFrustration)) return;
+                    processedData.push({ DevType: mapLabel('DevType', row.DevType), LearnCode: mappedLearnCode, AIFrustration: mappedFrustration, AIAcc: mapLabel('AIAcc', row.AIAcc), AISent: mapLabel('AISent', row.AISent) });
+                });
+            });
+        });
+        const finalProcessedData = processedData.filter(row => Object.values(row).every(val => val !== null));
+        const allLinks = []; for (let i = 0; i < sankeyColumns.length - 1; i++) { const sourceCol = sankeyColumns[i]; const targetCol = sankeyColumns[i + 1]; const linkCounts = {}; finalProcessedData.forEach(row => { const sourceName = row[sourceCol]; const targetName = row[targetCol]; if (sourceName && targetName) { const source = `${sourceCol}: ${sourceName}`; const target = `${targetCol}: ${targetName}`; const key = `${source}|${target}`; linkCounts[key] = (linkCounts[key] || 0) + 1; } }); for (const key in linkCounts) { const [source, target] = key.split('|'); allLinks.push({ source: source, target: target, value: linkCounts[key] }); } } const nodeSet = new Set(); finalProcessedData.forEach(row => { sankeyColumns.forEach(col => { const value = row[col]; if (value) nodeSet.add(`${col}: ${value}`); }); }); const formattedNodes = Array.from(nodeSet).map(name => ({ name }));
+        myChart.hideLoading();
+        myChart.setOption({
+            graphic: [ { type: 'text', 
+            left: '4%', 
+            bottom: '4%', 
+            style: { 
+              text: 'Cargo', 
+              textAlign: 'center', 
+              fill: '#333', 
+              fontSize: 14, 
+              fontWeight: 'bold' } }, 
+              { type: 'text', 
+              left: '23%', 
+              bottom: '4%', 
+              style: { 
+                text: 'Aprendizado', 
+                textAlign: 'center', 
+                fill: '#333', 
+                fontSize: 14, 
+                fontWeight: 'bold' } }, 
+                { type: 'text', 
+                left: '41.5%', 
+                bottom: '4%', 
+                style: { text: 'Frustração com IA', 
+                textAlign: 'center', 
+                fill: '#333', 
+                fontSize: 14, 
+                fontWeight: 'bold' } }, 
+                { type: 'text', 
+                left: '62.5%', 
+                bottom: '4%', 
+                style: 
+                { text: 'Confiança na IA', 
+                textAlign: 'center', 
+                fill: '#333', 
+                fontSize: 14, 
+                fontWeight: 'bold' } }, 
+                { type: 'text', left: '79%', bottom: '4%', style: { text: 'Sentimento sobre IA', textAlign: 'center', fill: '#333', fontSize: 14, fontWeight: 'bold' } } ],
+            tooltip: { trigger: 'item', triggerOn: 'mousemove', formatter: params => { if (params.data.source && params.data.target) { const sourceLabel = params.data.source.substring(params.data.source.indexOf(':') + 2); const targetLabel = params.data.target.substring(params.data.target.indexOf(':') + 2); return `${sourceLabel} → ${targetLabel}: <b>${params.value} pessoas</b>`; } const cleanName = params.name.substring(params.name.indexOf(':') + 2); const explanation = tooltipExplanations[cleanName]; if (explanation) { return `${cleanName}<br/><span style="font-size:12px; color: #777;">${explanation}</span>`; } return cleanName; } },
+            series: [{ type: 'sankey', data: formattedNodes, links: allLinks, left: '5%', right: '15%', top: '5%', bottom: '10%', emphasis: { focus: 'adjacency' }, orient: 'horizontal', nodeWidth: 20, nodeGap: 18, layoutIterations: 32, label: { position: 'right', fontSize: 10, formatter: params => params.name.substring(params.name.indexOf(':') + 2), color: '#333' }, lineStyle: { color: 'gradient', curveness: 0.5, opacity: 0.4 }, itemStyle: { borderColor: '#aaa', borderWidth: 1 } }]
+        }, true);
+    }
+    
+    function drawBarChart(groupName, dataToDraw) { const detailCategories = learnCodeGrouping[groupName]; if (!detailCategories) return; const counts = {}; detailCategories.forEach(detail => { const lowerDetail = detail.toLowerCase(); const translatedDetail = learnCodeDetailTranslations[lowerDetail] || detail; counts[translatedDetail] = 0; }); dataToDraw.forEach(row => { const learnMethods = (row.LearnCode || "").split(';').map(s => s.trim().toLowerCase()); learnMethods.forEach(method => { detailCategories.forEach(detail => { const lowerDetail = detail.toLowerCase(); if (method.includes(lowerDetail)) { const translatedDetail = learnCodeDetailTranslations[lowerDetail] || detail; counts[translatedDetail]++; } }); }); }); const sortedData = Object.entries(counts).sort(([,a],[,b]) => b-a); const labels = sortedData.map(item => item[0]); const values = sortedData.map(item => item[1]); myChart.hideLoading(); myChart.setOption({ title: { text: `Detalhes da Categoria: ${groupName}`, left: 'center' }, tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } }, xAxis: { type: 'category', data: labels, axisLabel: { interval: 0, rotate: 0 } }, yAxis: { type: 'value', name: 'Quantidade de Respostas' }, grid: { left: '3%', right: '4%', bottom: '20%', containLabel: true }, series: [{ name: 'Respostas', type: 'bar', data: values, barWidth: '60%', label: { show: true, position: 'top' } }] }, true); }
+    
+    function createCheckboxFilter(containerId, data, columnName) {
+        const container = document.getElementById(containerId).querySelector('.items');
+        container.innerHTML = '';
+        let valueSet = new Set();
+        if (['LearnCode', 'AIFrustration'].includes(columnName)) { data.forEach(row => (row[columnName] || "").split(';').map(s => s.trim()).filter(Boolean).forEach(value => { const mapped = mapLabel(columnName, value); if(mapped) valueSet.add(mapped); })); } else { data.forEach(row => { const mapped = mapLabel(columnName, row[columnName]); if (mapped) valueSet.add(mapped); }); }
+        const allLabel = document.createElement('label');
+        allLabel.innerHTML = `<input type="checkbox" class="select-all" checked> <strong>Selecionar Todos</strong>`;
+        container.appendChild(allLabel);
+        Array.from(valueSet).sort().forEach(value => { const label = document.createElement('label'); label.innerHTML = `<input type="checkbox" value="${value}" checked> ${value}`; container.appendChild(label); });
+        container.querySelector('.select-all').addEventListener('change', function() { container.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = this.checked); });
+    }
+
+    function getSelectedValues(containerId) { const selected = []; document.getElementById(containerId).querySelectorAll('.items input[type="checkbox"]:checked').forEach(cb => { if (!cb.classList.contains('select-all')) { selected.push(cb.value); } }); return selected; }
+
+    function applyFiltersAndRedraw() {
+        currentlyClickedNodeName = null;
+        const selectedDevTypes = getSelectedValues('devTypeFilter');
+        const selectedLearnCodes = getSelectedValues('learnCodeFilter');
+        const selectedAIFrustrations = getSelectedValues('aiFrustrationFilter');
+        const selectedAIAccs = getSelectedValues('aiAccFilter');
+        const selectedAISents = getSelectedValues('aiSentFilter');
+        
+        let filteredData = allRawData;
+        if (selectedDevTypes.length > 0) { filteredData = filteredData.filter(row => selectedDevTypes.includes(mapLabel('DevType', row.DevType))); }
+        if (selectedAIAccs.length > 0) { filteredData = filteredData.filter(row => selectedAIAccs.includes(mapLabel('AIAcc', row.AIAcc))); }
+        if (selectedAISents.length > 0) { filteredData = filteredData.filter(row => selectedAISents.includes(mapLabel('AISent', row.AISent))); }
+        
+        currentFilteredData = filteredData;
+        const pathFilters = { learnCode: selectedLearnCodes, aiFrustration: selectedAIFrustrations };
+        myChart.showLoading();
+        setTimeout(() => drawSankey(filteredData, pathFilters), 50);
+        document.getElementById('expandFilter').value = 'none';
+    }
+    
+    function resetFilters() { document.querySelectorAll('.dropdown-check-list .items input[type="checkbox"]').forEach(cb => cb.checked = true); applyFiltersAndRedraw(); }
+
+    fetch('dados_desenvolvedores_analise.json')
+        .then(response => response.json())
+        .then(rawData => {
+            allRawData = rawData;
+            currentFilteredData = rawData;
+            
+            createCheckboxFilter('devTypeFilter', allRawData, 'DevType');
+            createCheckboxFilter('learnCodeFilter', allRawData, 'LearnCode');
+            createCheckboxFilter('aiFrustrationFilter', allRawData, 'AIFrustration');
+            createCheckboxFilter('aiAccFilter', allRawData, 'AIAcc');
+            createCheckboxFilter('aiSentFilter', allRawData, 'AISent');
+
+            document.getElementById('applyFiltersBtn').addEventListener('click', applyFiltersAndRedraw);
+            document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+            
+            document.querySelectorAll('.dropdown-check-list').forEach(dropdown => {
+                const anchor = dropdown.querySelector('.anchor');
+                const items = dropdown.querySelector('.items');
+                anchor.addEventListener('click', function(event) { event.stopPropagation(); document.querySelectorAll('.dropdown-check-list.visible').forEach(openMenu => { if (openMenu !== this.parentElement) openMenu.classList.remove('visible'); }); this.parentElement.classList.toggle('visible'); });
+                // CORREÇÃO: Impede que o clique DENTRO da lista de checkboxes feche o menu
+                items.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                });
+            });
+            document.addEventListener('click', () => document.querySelectorAll('.dropdown-check-list.visible').forEach(m => m.classList.remove('visible')));
+            
+            const expandFilter = document.getElementById('expandFilter');
+            Object.keys(learnCodeGrouping).forEach(group => { const option = document.createElement('option'); option.value = group; option.textContent = group; expandFilter.appendChild(option); });
+            expandFilter.addEventListener('change', function() { const selectedGroup = this.value; if (selectedGroup !== 'none') { myChart.showLoading(); drawBarChart(selectedGroup, currentFilteredData); document.getElementById('sankey-controls').style.display = 'none'; document.getElementById('details-controls').style.display = 'block'; } });
+            const backToSankeyButton = document.getElementById('backToSankeyButton');
+            backToSankeyButton.addEventListener('click', function() { myChart.showLoading(); drawSankey(currentFilteredData, { learnCode: getSelectedValues('learnCodeFilter'), aiFrustration: getSelectedValues('aiFrustrationFilter') }); document.getElementById('sankey-controls').style.display = 'flex'; document.getElementById('details-controls').style.display = 'none'; expandFilter.value = 'none'; });
+
+            drawSankey(allRawData, {});
+        })
+        .catch(error => { console.error('Erro:', error); myChart.hideLoading(); dom.innerText = 'Falha ao carregar dados.'; });
+        
+    window.addEventListener('resize', () => myChart.resize());
+</script>
+</body>
+</html>
